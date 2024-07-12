@@ -34,30 +34,32 @@ namespace OnlineShopOOP
             Product clothes3 = new Clothes(8, "Skirt", 15, 10, true, "blue", "L");
             products.Add("Skirt", clothes3);
 
-
-            Console.WriteLine("L for login, R for register and 0 for restart");
-            string chosen = Console.ReadLine();
-            if (chosen.Equals("L")) {
-                string username = ValidLogInUsername(customers);
-                LogIn(customers, username);
-                ShowMenu(customers, products, username);
-                Console.WriteLine("Press 0 to logout");
-                //start
+            while (true){
+                Console.WriteLine("L for login, R for register and 0 for restart");
+                string chosen = Console.ReadLine();
+                if (chosen.Equals("L"))
+                {
+                    string username = ValidLogInUsername(customers);
+                    LogIn(customers, username);
+                    if (ShowMenu(customers, products, username) == true) {
+                        continue;
+                    }
+                }
+                else if (chosen.Equals("R"))
+                {
+                    Register(customers);
+                    string username = ValidLogInUsername(customers);
+                    LogIn(customers, username);
+                    if (ShowMenu(customers, products, username) == true){
+                        continue;
+                    }
+                    Console.WriteLine("Press 0 to logout");
+                }
+                else
+                {
+                    Console.WriteLine("Incorrect input");
+                }
             }
-            else if (chosen.Equals("R")) {
-                Register(customers);
-                string username = ValidLogInUsername(customers);
-                LogIn(customers, username);
-                ShowMenu(customers, products, username);
-                Console.WriteLine("Press 0 to logout");
-                //start
-            }
-            else {
-                Console.WriteLine("Incorrect input");
-                //start
-            }
-
-            Console.WriteLine();
 
         }
 
@@ -126,14 +128,15 @@ namespace OnlineShopOOP
 
         }
 
-        public static void ShowMenu(Dictionary<string, Customer> customers, Dictionary<string, Product> products, string user) {
+        public static bool ShowMenu(Dictionary<string, Customer> customers, Dictionary<string, Product> products, string user) {           
             Console.WriteLine("Type 'view products' to view all products in shop");
-            Console.WriteLine("Type 'add' to start adding products in your wish list");
+            Console.WriteLine("Type 'add' to start adding products in your wish list and 'stop' to stop adding");
             Console.WriteLine("Type 'wish list' to view your products in wish list");
             Console.WriteLine("Type 'order' to order products");
             Console.WriteLine("Type 'exit' to log out");
-            string option = Console.ReadLine(); 
-            while(!option.Equals("exit")){
+            string option = Console.ReadLine();
+            bool toExit = option.Equals("exit");
+            while (toExit == false){
                 if (option.Equals("view products"))
                 {
                     customers[user].ShowAllProductsInShop(products);
@@ -160,11 +163,16 @@ namespace OnlineShopOOP
                     double price = customers[user].productsInShoppingList.CalculatePrice();
                     Console.WriteLine("Your order cost " + price);
                 }
+                else if (option.Equals("exit")){
+                    toExit = true;
+                    break;
+                }
                 else{
                     Console.WriteLine("Incorrect input");
                 }
                 option = Console.ReadLine();
             }
+            return toExit;
         }
 
     
